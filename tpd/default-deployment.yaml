@@ -1,0 +1,37 @@
+# Default capture name: "pocket-deployment.yaml"
+
+# the source path to pull from
+git_url: null # 'git@github.com:Strangemother/polypoint.git'
+# The branch to fetch on update.
+git_branch: HEAD
+# The target directory containing the fetched source.
+# relative from this file directory
+path: .
+# the env directory, usually outside the source, relative to the
+# source code dir.
+# code dir (a sibling)
+env_dir: ..
+# The name of the environment folder, inside env_dir
+env_name: env
+
+# the location of the site store and conf.
+# relative to the source code dir.
+site_conf_dir: ..
+# hopefully not edited by the user
+site_conf_name: "{project_name}-site-config.json"
+
+# Deployment assets, relative to the project root
+deployment_assets_dir: "deployment/"
+
+# The python requirements file within the asset director
+assets_requirements_name: requirements.txt
+
+# Apt installs for a linux box
+apt:
+  update: true
+  install:
+    - python3-venv
+    - python3-dev
+    - libpq-dev
+    - nginx
+    - curl
