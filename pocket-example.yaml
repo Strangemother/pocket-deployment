@@ -1,0 +1,7 @@
+# the source path to pull from
+git_url: null
+# The branch to fetch on update.
+git_branch: HEAD
+# The target directory containing the fetched source.
+# relative from this file directory
+path: .
