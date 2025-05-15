@@ -55,6 +55,9 @@ def init_start_command(cf):
     pprint(config)
 
     print('============================')
+
+    ensure_linux_apt(cf)
+
     # Create env
     env_path = ppp / config['env_dir']
     env = ensure_venv(env_path, config['env_name'])
@@ -62,6 +65,62 @@ def init_start_command(cf):
     # Requirements are dependant upon the deployment module
     assets_requirements = cf.deployment_assets_dir / config['assets_requirements_name']
     install_requirements(env, assets_requirements)
+
+
+def ensure_linux_apt(cf):
+    config = cf.config
+    # apt
+    apt = config.get('apt', {})
+    if apt.get('update', False) is False:
+        print('Will not perform apt update')
+        return
+
+    print('Perform apt-update')
+    if apt.get('first_time_only') is False:
+        # Straight to install,
+        print('Perform apt installs')
+        return run_apt_update()
+
+    # Only first-time tested installs reach here.
+    if config['first_time_install'] is False:
+        # Is not first time,
+        print('Will not perform apt update')
+
+    print('Perform apt installs')
+    return run_apt_update()
+
+
+def run_apt_update():
+    current_user = os.getenv('USER') or os.getlogin()
+
+    if is_sudoer(current_user):
+        try:
+            subprocess.run(['sudo', 'apt', 'update'], check=True)
+            print("Update successful.")
+        except subprocess.CalledProcessError as e:
+            print(f"Sudo update failed: {e}")
+    else:
+        print(f"User '{current_user}' is not a sudoer. Cannot proceed.")
+
+
+import subprocess
+
+def is_sudoer(user):
+    try:
+        # Try running a harmless command with sudo -l
+        result = subprocess.run(
+            ['sudo', '-lU', user],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        if "may run the following commands" in result.stdout:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error checking sudo status: {e}")
+        return False
 
 
 import json
