@@ -6,6 +6,7 @@ from .git import refresh_repo
 from .env_tool import install_requirements, ensure_venv
 from .conf_tools import get_config_dir
 
+import os
 
 def init_start_command(cf):
     """Perform the first action from _start_. The source should be cloned of
